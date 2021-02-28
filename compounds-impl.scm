@@ -1,15 +1,9 @@
 (define-record-type <compound-object>
-  (raw-compound-object subobjs)
+  (raw-compound-object type props subobjs)
   compound?
+  (type raw-object-type)
+  (props raw-object-props)
   (subobjs raw-object-subobjects))
-
-(define (compound-subobjects obj)
-  (if (compound? obj)
-    (raw-object-subobjects obj)
-    (list obj)))
-
-(define (make-compound subobjs)
-  (raw-compound-object (assemble-subobjects subobjs)))
 
 (define (alist? lst)
   (cond
@@ -21,11 +15,9 @@
                  (symbol? (car entry))
                  (alist? rest))))))
 
-(define (compound-type? obj)
-  (and (pair? obj)
-       (symbol? (car obj))
-       (alist? (cdr obj))))
-
+;; private
+;; flatten list of objects and potentially other compounds
+;; into simple list of objects without compounds
 (define (assemble-subobjects in)
   (let loop ((in in) 
              (out '()))
@@ -36,11 +28,33 @@
                 (append (reverse (compound-subobjects (car in))) out)
                 (cons (car in) out))))))
 
-(define (compound . subobjs)
-  (make-compound subobjs))
+(define (make-compound type props subobjs)
+  (unless (or (not type)
+              (symbol? type))
+    (error "compound type must be #f or a symbol"))
+  (unless (alist? props)
+    (error "compound properties must be an association list"))
+  (unless (list? subobjs)
+    (error "compound subobjects must be a list"))
+  (raw-compound-object type props (assemble-subobjects subobjs)))
 
-(define (compound-values obj)
-  (apply values (compound-subobjects obj)))
+(define (compound type props . subobjs)
+  (make-compound type props subobjs))
+
+(define (compound-type obj)
+  (if (compound? obj)
+      (raw-object-type obj)
+      #f))
+
+(define (compound-properties obj)
+  (if (compound? obj)
+      (raw-object-props obj)
+      '()))
+
+(define (compound-subobjects obj)
+  (if (compound? obj)
+    (raw-object-subobjects obj)
+    (list obj)))
 
 (define (compound-length obj)
   (if (compound? obj)
@@ -50,8 +64,10 @@
 (define (compound-ref obj k)
   (list-ref (compound-subobjects obj) k))
 
-(define (compound-map mapper obj)
-  (make-compound (compound-map->list mapper obj)))
+(define (compound-map type props mapper obj)
+  (if (compound? obj)
+      (make-compound type props (compound-map->list mapper obj))
+      (compound #f '() (mapper obj))))
 
 (define (compound-map->list mapper obj)
   (map mapper (compound-subobjects obj)))
@@ -66,34 +82,49 @@
       (else
        (loop (cdr list) result)))))
 
-(define (compound-filter pred obj)
-  (raw-compound-object (filter pred (compound-subobjects obj))))
+(define (compound-filter type props pred obj)
+  (define subobjs (filter pred (compound-subobjects obj)))
+  (if (compound? obj)
+      ;; use raw instead of compound, since resultant list won't have compounds in it 
+      (raw-compound-object type props subobjs)   
+      (raw-compound-object #f '() subobjs)))
 
-(define (compound-predicate pred obj)
-  (let loop ((in (compound-subobjects obj)))
-   (cond
-     ((null? in)
-      #f)
-     ((pred obj)
-      => (lambda (x) x))
-     (else
-       (loop (cdr in))))))
+(define (compound-predicate pred)
+  (lambda (obj)
+    (and
+      (or 
+        ;; compound itself satisfies pred
+        (pred obj)
 
-(define (compound-access pred accessor obj default)
-  (let loop ((in (compound-subobjects obj)))
-   (cond
-     ((null? in)
-      default)
-     ((pred (car in))
-      (accessor (car in)))
-     (else
-       (loop (cdr in))))))
+        ;; compound type is not #f and satisfies pred
+        (let ((type (compound-type obj)))
+         (and type (pred type)))
 
-(define (compound-type-properties sym obj)
-  (define (pred subobj)
-    (and (compound-type? subobj)
-         (equal? sym (car subobj))))
-  (cond
-    ((compound? obj) (compound-access pred cdr obj #f))
-    ((pred obj) (cdr obj))
-    (else #f)))
+        ;; compound has subobj that satisfies pred
+        (let loop ((subobjs (compound-subobjects obj)))
+         (cond 
+           ((null? subobjs) #f)
+           ((pred (car subobjs)) #t)
+           (else (loop (cdr subobjs))))))
+
+      ;; if matched pred, convert result to #t 
+      #t)))
+
+(define (compound-accessor pred accessor default)
+  ;; impl when obj is compound
+  (define (accessor/compound obj)
+    (let loop ((subobjs (compound-subobjects obj)))
+     (cond
+       ((null? subobjs) default)
+       ((pred (car subobjs)) (accessor (car subobjs)))
+       (else (loop (cdr subobjs))))))
+  ;; impl when obj is just a value
+  (define (accessor/single obj)
+    (if (pred obj)
+        (accessor obj)
+        default))
+  
+  (lambda (obj)
+    (if (compound? obj)
+        (accessor/compound obj)
+        (accessor/single obj))))

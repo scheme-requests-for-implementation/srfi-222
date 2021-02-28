@@ -86,7 +86,7 @@ whose only subobject is the result of applying *mapper* to *obj*.
 
 If *obj* is a compound object, returns a list
 whose elements result from invoking *mapper* on each subobject of *obj*.
-Although the elemnts of the result are in the same order as the subobjects of *obj*,
+Although the elements of the result are in the same order as the subobjects of *obj*,
 the order in which *mapper* is applied to them is unspecified.
 
 If *obj* is not a compound object, returns a list
