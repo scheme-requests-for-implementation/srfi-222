@@ -4,7 +4,6 @@
   
   (export
     make-compound
-    compound
     compound?
     compound-type
     compound-properties
