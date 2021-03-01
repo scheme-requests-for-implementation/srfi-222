@@ -81,8 +81,8 @@ If *obj* is a compound type, returns its type symbol.
 If not, returns `#f`.
 
 ```
-(compound-type? alyssa) => #f
-(compound-type? george) => 'ta
+(compound-type alyssa) => #f
+(compound-type george) => 'ta
 ```
 
 `(compound-properties `*obj*`)`
