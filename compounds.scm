@@ -6,16 +6,15 @@
     make-compound
     compound
     compound?
-    compound-type?
+    compound-type
+    compound-properties
     compound-subobjects
-    compound-values
     compound-length
     compound-ref
     compound-map
     compound-map->list
     compound-filter
     compound-predicate
-    compound-access
-    compound-type-properties)
+    compound-accessor)
   
   (include "compounds-impl.scm"))
