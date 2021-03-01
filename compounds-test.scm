@@ -16,7 +16,7 @@
 
 (test-begin "Compounds")
 
-(test-group "compound, compound?, compound-subobjects"
+(test-group "make-compound, compound?, compound-subobjects"
             (define (test c)
               (test-assert (compound? c))
               (test-equal (compound-subobjects c) (list 1 2 3)))
