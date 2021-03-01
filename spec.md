@@ -46,8 +46,8 @@ which are then added to the compound object in sequence.
   (hired hired)     ; integer year
   (salary salary))  ; annualized
   
-(define alyssa (student 1986 4.0)
-(define guy (teacher 1981 25000)
+(define alyssa (student 1986 4.0))
+(define guy (teacher 1981 25000))
 (define george
   (make-compound 'ta '((quality . curiosity)) ; teaching assistant
     (student 1982 3.8)
@@ -81,8 +81,8 @@ If *obj* is a compound type, returns its type symbol.
 If not, returns `#f`.
 
 ```
-(compound-type alyssa) => #f
-(compound-type? george) => #t
+(compound-type? alyssa) => #f
+(compound-type? george) => 'ta
 ```
 
 `(compound-properties `*obj*`)`
@@ -142,8 +142,8 @@ whose typesym is `#f`, whose alist is `()`, and
 whose only subobject is the result of applying *mapper* to *obj*.
 
 ```
-(compound-map uni-member? alyssa) => #<compound: #t>
-(compound-map uni-member? george) => #<compound: #t #t>
+(compound-map #f '() uni-member? alyssa) => #<compound: #t>
+(compound-map #f '() uni-member? george) => #<compound: #t #t>
 ```
 
 `(compound-map->list `*mapper obj*`)`
@@ -173,8 +173,8 @@ If *obj* satisfies *pred*, the only subobject of the result is *obj*.
 If *obj* does not satisfy *pred*, the result has no subobjects.
 
 ```
-(compound-filter teacher? alyssa) => #<compound>
-(compound-filter teacher? george) =>
+(compound-filter #f '() teacher? alyssa) => #<compound>
+(compound-filter #f '() teacher? george) =>
   #<compound: #<teacher>>
 ```
 
@@ -193,7 +193,7 @@ If *obj* is an object that:
 then the procedure returns `#t`.  Otherwise it returns `#f`.
 
 ```
-(define (teaches? obj) (compound-pred teacher?))
+(define teaches? (compound-predicate teacher?))
 (teaches? alyssa) => #f
 (teaches? george) => #t
 ```
@@ -216,6 +216,6 @@ If *obj* does not satisfy *pred*, *default* is returned.
 (uni-member-hired alyssa) => #f
 (uni-member-hired guy) => 1981
 (uni-member-hired george) => 1983
-(uni-member-hired (make-compound #f '() 27 42 98 fire!) => #f
+(uni-member-hired (make-compound #f '() 27 42 98 'fire!)) => #f
 ```
 

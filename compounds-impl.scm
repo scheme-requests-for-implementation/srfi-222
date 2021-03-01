@@ -28,18 +28,13 @@
                 (append (reverse (compound-subobjects (car in))) out)
                 (cons (car in) out))))))
 
-(define (make-compound type props subobjs)
+(define (make-compound type props . subobjs)
   (unless (or (not type)
               (symbol? type))
     (error "compound type must be #f or a symbol"))
   (unless (alist? props)
     (error "compound properties must be an association list"))
-  (unless (list? subobjs)
-    (error "compound subobjects must be a list"))
   (raw-compound-object type props (assemble-subobjects subobjs)))
-
-(define (compound type props . subobjs)
-  (make-compound type props subobjs))
 
 (define (compound-type obj)
   (if (compound? obj)
@@ -66,8 +61,8 @@
 
 (define (compound-map type props mapper obj)
   (if (compound? obj)
-      (make-compound type props (compound-map->list mapper obj))
-      (compound #f '() (mapper obj))))
+      (apply make-compound `(,type ,props ,@(compound-map->list mapper obj)))
+      (make-compound #f () (mapper obj))))
 
 (define (compound-map->list mapper obj)
   (map mapper (compound-subobjects obj)))
