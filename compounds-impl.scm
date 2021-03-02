@@ -62,7 +62,7 @@
 (define (compound-map type props mapper obj)
   (if (compound? obj)
       (apply make-compound `(,type ,props ,@(compound-map->list mapper obj)))
-      (make-compound #f () (mapper obj))))
+      (make-compound #f '() (mapper obj))))
 
 (define (compound-map->list mapper obj)
   (map mapper (compound-subobjects obj)))
