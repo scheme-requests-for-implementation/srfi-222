@@ -41,7 +41,7 @@ this is either a symbol or <code>#f</code>, meaning that the object has no type.
 Associated key-value properties are also specified in the form of an alist.
 It is an error to mutate any list passed to or returned from these procedures.</p>
 <h3>Procedures</h3>
-<p><code>(make-compound </code> <em>typesym alist obj</em> ...<code>)</code></p>
+<p><code>(make-compound </code> <em>typesym</em> <em>alist</em> <em>obj</em> ...<code>)</code></p>
 <p>Create a compound object whose type is <em>typesym</em>
 and whose properties are in <em>props</em>.
 It contains the objects in <em>list</em> in the specified order.
@@ -121,7 +121,7 @@ zero, or greater than or equal to <code>(compound-length </code><em>obj</em><cod
 <pre><code><blockquote>(compound-ref alyssa 0) =&gt; #&lt;student&gt;
 (compound-ref george 1) =&gt; #&lt;teacher&gt;
 </blockquote></code></pre>
-<p><code>(compound-map </code><em>typesym alist mapper obj</em><code>)</code></p>
+<p><code>(compound-map </code><em>typesym</em> <em>alist</em> <em>mapper</em> <em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns a compound object
 of type <em>typesym</em> and with the properties in <em>alist</em>.
 The subobjects result from invoking <em>mapper</em> on each subobject of <em>obj</em>.
@@ -145,7 +145,7 @@ whose only element is the result of applying <em>mapper</em> to <em>obj</em>.</p
 <pre><code><blockquote>(compound-map-&gt;list uni-member? alyssa) =&gt; (#t)
 (compound-map-&gt;list uni-member? george) =&gt; (#t #t)
 </blockquote></code></pre>
-<p><code>(compound-filter </code><em>typesym alist pred obj</em><code>)</code></p>
+<p><code>(compound-filter </code><em>typesym</em> <em>alist</em> <em>pred</em> <em>obj</em><code>)</code></p>
 <p>Returns a compound object
 whose typesym is <em>typesym</em> and whose properties are in <em>alist</em>.
 It contains the subobjects of <em>obj</em> that satisfy <em>pred</em>.</p>
@@ -173,7 +173,7 @@ and its type satisfies <em>pred</em></li>
 (teaches? alyssa) =&gt; #f
 (teaches? george) =&gt; #t
 </blockquote></code></pre>
-<p><code>(compound-accessor </code><em>pred accessor default</em><code>)</code></p>
+<p><code>(compound-accessor </code><em>pred</em> <em>accessor</em> <em>default</em><code>)</code></p>
 <p>Returns a procedure taking a single argument <em>obj</em>
 that behaves as follows:</p>
 <p>If <em>obj</em> is a compound object, <em>accessor</em> is applied to
