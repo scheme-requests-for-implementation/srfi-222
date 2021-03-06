@@ -43,9 +43,9 @@ It is an error to mutate any list passed to or returned from these procedures.</
 <h3>Procedures</h3>
 <p><code>(make-compound </code> <em>typesym</em> <em>alist</em> <em>obj</em> ...<code>)</code></p>
 <p>Create a compound object whose type is <em>typesym</em>
-and whose properties are in <em>props</em>.
-It contains the objects in <em>list</em> in the specified order.
-If any object in <em>list</em> is itself a compound object,
+and whose properties are in <em>alist</em>.
+It contains the objects in <em>obj...</em> in the specified order.
+If any object in <em>obj...</em> is itself a compound object,
 it is flattened into its subobjects,
 which are then added to the compound object in sequence.
 <p>[R6RS analogue: <code>condition</code>]</p>
