@@ -62,7 +62,7 @@ If any object in <em>obj...</em> is itself a compound object,
 it is flattened into its subobjects,
 which are then added to the compound object in sequence.
 <p>[R6RS analogue: <code>condition</code>]</p>
-<pre><code>;; The following definitions are referenced in later examples
+<pre><blockquote>;; The following definitions are referenced in later examples
 
 (define-record-type &lt;student&gt;
   (student year gpa)
@@ -94,46 +94,46 @@ which are then added to the compound object in sequence.
     ((student? obj) (year obj))
     ((teacher? obj) (hired obj))
     (else #f)))
-</code></pre>
+</blockquote></pre>
 <p><code>(compound? </code><em>obj</em><code>)</code></p>
 <p>Returns <code>#t</code> if <em>obj</em> is a compound object, and <code>#f</code> otherwise.
 <p>[R6RS analogue: <code>condition?</code>]</p>
-<pre><code>(compound? alyssa) =&gt; #f
+<pre><blockquote>(compound? alyssa) =&gt; #f
 (compound? george) =&gt; #t
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-type </code><em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound type, returns its type symbol.
 If not, returns <code>#f</code>.</p>
-<pre><code>(compound-type alyssa) =&gt; #f
+<pre><blockquote>(compound-type alyssa) =&gt; #f
 (compound-type george) =&gt; 'ta
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-properties </code><em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound type, returns its properties.
 If not, returns <code>()</code>.</p>
-<pre><code>(compound-properties alyssa) =&gt; ()
+<pre><blockquote>(compound-properties alyssa) =&gt; ()
 (compound-properties george) =&gt; ((quality . curiosity))
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-subobjects </code><em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns a list of its subobjects;
 otherwise, returns a list containing only <em>obj</em>.
 <p>[R6RS analogue: <code>simple-conditions</code>]</p>
-<pre><code>(compound-subobjects alyssa) =&gt; (#&lt;student&gt;)
+<pre><blockquote>(compound-subobjects alyssa) =&gt; (#&lt;student&gt;)
 (compound-subobjects george) =&gt; (#&lt;student&gt; #&lt;teacher&gt;)
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-length </code><em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns the number of its subobjects as an exact
 integer.  Otherwise, it returns 1.</p>
-<pre><code>(compound-length alyssa) =&gt; 1
+<pre><blockquote>(compound-length alyssa) =&gt; 1
 (compound-length george) =&gt; 2
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-ref </code><em>obj k</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns the <em>k</em>th subobject.
 Otherwise, <em>obj</em> is returned.
 In either case, it is an error if <em>k</em> is less than
 zero, or greater than or equal to <code>(compound-length </code><em>obj</em><code>)</code>.</p>
-<pre><code>(compound-ref alyssa 0) =&gt; #&lt;student&gt;
+<pre><blockquote>(compound-ref alyssa 0) =&gt; #&lt;student&gt;
 (compound-ref george 1) =&gt; #&lt;teacher&gt;
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-map </code><em>typesym</em> <em>alist</em> <em>mapper</em> <em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns a compound object
 of type <em>typesym</em> and with the properties in <em>alist</em>.
@@ -145,9 +145,9 @@ which are then added to the result in sequence.</p>
 <p>If <em>obj</em> is not a compound object, returns a compound object
 whose typesym is <code>#f</code>, whose alist is <code>()</code>, and
 whose only subobject is the result of applying <em>mapper</em> to <em>obj</em>.</p>
-<pre><code>(compound-map #f '() uni-member? alyssa) =&gt; #&lt;compound: #t&gt;
+<pre><blockquote>(compound-map #f '() uni-member? alyssa) =&gt; #&lt;compound: #t&gt;
 (compound-map #f '() uni-member? george) =&gt; #&lt;compound: #t #t&gt;
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-map-&gt;list </code><em>mapper obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns a list
 whose elements result from invoking <em>mapper</em> on each subobject of <em>obj</em>.
@@ -155,9 +155,9 @@ Although the elements of the result are in the same order as the subobjects of <
 the order in which <em>mapper</em> is applied to them is unspecified.</p>
 <p>If <em>obj</em> is not a compound object, returns a list
 whose only element is the result of applying <em>mapper</em> to <em>obj</em>.</p>
-<pre><code>(compound-map-&gt;list uni-member? alyssa) =&gt; (#t)
+<pre><blockquote>(compound-map-&gt;list uni-member? alyssa) =&gt; (#t)
 (compound-map-&gt;list uni-member? george) =&gt; (#t #t)
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-filter </code><em>typesym</em> <em>alist</em> <em>pred</em> <em>obj</em><code>)</code></p>
 <p>Returns a compound object
 whose typesym is <em>typesym</em> and whose properties are in <em>alist</em>.
@@ -166,10 +166,10 @@ It contains the subobjects of <em>obj</em> that satisfy <em>pred</em>.</p>
 whose typesym is <em>typesym</em> and whose properties are in <em>alist</em>.
 If <em>obj</em> satisfies <em>pred</em>, the only subobject of the result is <em>obj</em>.
 If <em>obj</em> does not satisfy <em>pred</em>, the result has no subobjects.</p>
-<pre><code>(compound-filter #f '() teacher? alyssa) =&gt; #&lt;compound&gt;
+<pre><blockquote>(compound-filter #f '() teacher? alyssa) =&gt; #&lt;compound&gt;
 (compound-filter #f '() teacher? george) =&gt;
   #&lt;compound: #&lt;teacher&gt;&gt;
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-predicate </code><em>pred</em><code>)</code></p>
 <p>Returns a procedure taking a single argument <em>obj</em>
 that behaves as follows:</p>
@@ -182,10 +182,10 @@ and its type satisfies <em>pred</em></li>
 </ul>
 <p>then the procedure returns <code>#t</code>.  Otherwise it returns <code>#f</code>.
 <p>[R6RS analogue: <code>condition-predicate</code>]</p>
-<pre><code>(define teaches? (compound-predicate teacher?))
+<pre><blockquote>(define teaches? (compound-predicate teacher?))
 (teaches? alyssa) =&gt; #f
 (teaches? george) =&gt; #t
-</code></pre>
+</blockquote></pre>
 <p><code>(compound-accessor </code><em>pred</em> <em>accessor</em> <em>default</em><code>)</code></p>
 <p>Returns a procedure taking a single argument <em>obj</em>
 that behaves as follows:</p>
@@ -196,12 +196,12 @@ if there is no such subobject, <em>default</em> is returned.</p>
 it applies <em>accessor</em> to <em>obj</em> and returns what it returns.
 If <em>obj</em> does not satisfy <em>pred</em>, <em>default</em> is returned.
 <p>[R6RS analogue: <code>condition-accessor</code>]</p>
-<pre><code>(define uni-member-hired (compound-accessor teacher? hired #f)
+<pre><blockquote>(define uni-member-hired (compound-accessor teacher? hired #f)
 (uni-member-hired alyssa) =&gt; #f
 (uni-member-hired guy) =&gt; 1981
 (uni-member-hired george) =&gt; 1983
 (uni-member-hired (make-compound #f '() 27 42 98 'fire!)) =&gt; #f
-</code></pre>
+</blockquote></pre>
 
 <h2 id="implementation">Implementation</h2>
 
