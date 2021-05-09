@@ -25,10 +25,15 @@
 
 <h2 id="abstract">Abstract</h2>
 
-<p>Compound objects are a generalization of R6RS compound conditions,
-and are suitable for use in creating and handling conditions among other purposes.
+<p>Compound objects are analogous to R6RS compound conditions,
+and are suitable for use in creating and handling conditions
+on non-R6RS systems, among other purposes.
 They encapsulate an immutable sequence of subobjects, which can be
-any object except another compound object.</p>
+any object except another compound object.
+It is possible to implement R6RS compound conditions on top of
+compound objects, but not vice versa.
+Note that this SRFI does not provide any analogue to R6RS
+<i>simple</i> conditions, which are just records.
 
 <h2 id="issues">Issues</h2>
 
@@ -40,24 +45,18 @@ without the usual complications of multiple inheritance.
 A compound object can
 be used to represent multiple otherwise unrelated aspects of a value
 or situation.
-They can be stand-alone or belong to a type (designated by a symbol).
 Because they are sequences, they can be used to
 represent priorities of interpretation from higher to lower.  Most
 of the operations described
-in this section treat a simple condition identically to a compound
-condition with itself as its own sole component.</p>
+in this section treat a non-compound object identically to a compound
+object with the simple object as its sole component.</p>
 
 
 <h2 id="specification">Specification</h2>
-<p>When a compound object is created, a type for it may be specified:
-this is either a symbol or <code>#f</code>, meaning that the object has no type.
-Associated key-value properties are also specified in the form of an alist.
-It is an error to mutate any list passed to or returned from these procedures.</p>
 <h3>Procedures</h3>
-<p><code>(make-compound </code> <em>typesym</em> <em>alist</em> <em>obj</em> ...<code>)</code></p>
-<p>Create a compound object whose type is <em>typesym</em>
-and whose properties are in <em>alist</em>.
-It contains the objects in <em>obj...</em> in the specified order.
+<p><code>(make-compound </code> <em>obj</em> ...<code>)</code></p>
+<p>Create a compound object
+containing the objects in <em>obj...</em> in the specified order.
 If any object in <em>obj...</em> is itself a compound object,
 it is flattened into its subobjects,
 which are then added to the compound object in sequence.
@@ -79,10 +78,11 @@ which are then added to the compound object in sequence.
 (define alyssa (student 1986 4.0))
 (define guy (teacher 1981 25000))
 (define george
-  (make-compound 'ta '((quality . curiosity)) ; teaching assistant
+  (make-compound ; teaching assistant
     (student 1982 3.8)
     (teacher 1983 1000)))
     
+FIXME
 (define (uni-member? obj)
   (or
     (student? obj)
@@ -134,16 +134,14 @@ zero, or greater than or equal to <code>(compound-length </code><em>obj</em><cod
 <pre><blockquote>(compound-ref alyssa 0) =&gt; #&lt;student&gt;
 (compound-ref george 1) =&gt; #&lt;teacher&gt;
 </blockquote></pre>
-<p><code>(compound-map </code><em>typesym</em> <em>alist</em> <em>mapper</em> <em>obj</em><code>)</code></p>
-<p>If <em>obj</em> is a compound object, returns a compound object
-of type <em>typesym</em> and with the properties in <em>alist</em>.
+<p><code>(compound-map </code><em>mapper</em> <em>obj</em><code>)</code></p>
+<p>If <em>obj</em> is a compound object, returns a compound object.
 The subobjects result from invoking <em>mapper</em> on each subobject of <em>obj</em>.
 Although the subobjects of the result are in the same order as the subobjects of <em>obj</em>,
 the order in which <em>mapper</em> is applied to them is unspecified.
 If any resulting subobject is itself a compound object, it is flattened into its subobjects,
 which are then added to the result in sequence.</p>
 <p>If <em>obj</em> is not a compound object, returns a compound object
-whose typesym is <code>#f</code>, whose alist is <code>()</code>, and
 whose only subobject is the result of applying <em>mapper</em> to <em>obj</em>.</p>
 <pre><blockquote>(compound-map #f '() uni-member? alyssa) =&gt; #&lt;compound: #t&gt;
 (compound-map #f '() uni-member? george) =&gt; #&lt;compound: #t #t&gt;
@@ -158,12 +156,11 @@ whose only element is the result of applying <em>mapper</em> to <em>obj</em>.</p
 <pre><blockquote>(compound-map-&gt;list uni-member? alyssa) =&gt; (#t)
 (compound-map-&gt;list uni-member? george) =&gt; (#t #t)
 </blockquote></pre>
-<p><code>(compound-filter </code><em>typesym</em> <em>alist</em> <em>pred</em> <em>obj</em><code>)</code></p>
+<p><code>(compound-filter </code><em>pred</em> <em>obj</em><code>)</code></p>
+FIXME
 <p>Returns a compound object
-whose typesym is <em>typesym</em> and whose properties are in <em>alist</em>.
 It contains the subobjects of <em>obj</em> that satisfy <em>pred</em>.</p>
-<p>If <em>obj</em> is not a compound object, it returns a compound object
-whose typesym is <em>typesym</em> and whose properties are in <em>alist</em>.
+<p>If <em>obj</em> is not a compound object, it returns a compound object.
 If <em>obj</em> satisfies <em>pred</em>, the only subobject of the result is <em>obj</em>.
 If <em>obj</em> does not satisfy <em>pred</em>, the result has no subobjects.</p>
 <pre><blockquote>(compound-filter #f '() teacher? alyssa) =&gt; #&lt;compound&gt;
