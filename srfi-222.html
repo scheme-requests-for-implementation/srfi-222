@@ -64,35 +64,37 @@ which are then added to the compound object in sequence.
 <pre><blockquote>;; The following definitions are referenced in later examples
 
 (define-record-type &lt;student&gt;
-  (student year gpa)
+  (student admission-year gpa)
   student?
-  (year year)      ; expected B.S. graduation year
+  (admission-year admission-year)
   (gpa gpa))       ; grade-point average
   
 (define-record-type &lt;teacher&gt;
-  (teacher hired salary)
+  (teacher hire-year salary)
   teacher?
-  (hired hired)     ; integer year
+  (hire-year hired)     ; integer year
   (salary salary))  ; annualized
   
 (define alyssa (student 1986 4.0))
+
 (define guy (teacher 1981 25000))
+
 (define george
-  (make-compound ; teaching assistant
-    (student 1982 3.8)
+  (make-compound 'teaching-assistant
+    (student 1979 3.8)
     (teacher 1983 1000)))
     
-FIXME
 (define (uni-member? obj)
   (or
-    (student? obj)
-    (teacher? obj)
-    (and (compound? obj) (eqv? 'ta (compound-type obj)))))
+    (compound-predicate teacher? obj)
+    (compound-predicate student? obj)))
 
 (define (uni-member-date obj)
   (cond
-    ((student? obj) (year obj))
-    ((teacher? obj) (hired obj))
+    ((compound-predicate student? obj)
+     (compound-access student? year obj))
+    ((compound-predicate teacher? obj)
+     (compound-access student year obj))
     (else #f)))
 </blockquote></pre>
 <p><code>(compound? </code><em>obj</em><code>)</code></p>
@@ -157,47 +159,39 @@ whose only element is the result of applying <em>mapper</em> to <em>obj</em>.</p
 (compound-map-&gt;list uni-member? george) =&gt; (#t #t)
 </blockquote></pre>
 <p><code>(compound-filter </code><em>pred</em> <em>obj</em><code>)</code></p>
-FIXME
 <p>Returns a compound object
 It contains the subobjects of <em>obj</em> that satisfy <em>pred</em>.</p>
 <p>If <em>obj</em> is not a compound object, it returns a compound object.
 If <em>obj</em> satisfies <em>pred</em>, the only subobject of the result is <em>obj</em>.
 If <em>obj</em> does not satisfy <em>pred</em>, the result has no subobjects.</p>
 <pre><blockquote>(compound-filter #f '() teacher? alyssa) =&gt; #&lt;compound&gt;
-(compound-filter #f '() teacher? george) =&gt;
+(compound-filter teacher? george) =&gt;
   #&lt;compound: #&lt;teacher&gt;&gt;
 </blockquote></pre>
-<p><code>(compound-predicate </code><em>pred</em><code>)</code></p>
-<p>Returns a procedure taking a single argument <em>obj</em>
-that behaves as follows:</p>
-<p>If <em>obj</em> is an object that:</p>
-<ul>
-<li>satisfies <em>pred</em></li>
-<li>or is a compound object whose type is not <code>#f</code>
-and its type satisfies <em>pred</em></li>
-<li>or at least one of its subobjects satisfies <em>pred</em></li>
-</ul>
-<p>then the procedure returns <code>#t</code>.  Otherwise it returns <code>#f</code>.
+<p><code>(compound-predicate pred obj </code><em>pred</em><code>)</code></p>
+<p>If <em>obj</em> satisfies <em>pred</em>,
+or is a compound object and
+at least one of its subobjects satisfies <em>pred</em>,
+then returns <code>#t</code>; otherwise returns <code>#f</code>.
 <p>[R6RS analogue: <code>condition-predicate</code>]</p>
-<pre><blockquote>(define teaches? (compound-predicate teacher?))
-(teaches? alyssa) =&gt; #f
-(teaches? george) =&gt; #t
+<pre><blockquote>
+(compound-predicate student? alyssa) =&gt; #f
+(compound-predicate teacher? george) =&gt; #t
 </blockquote></pre>
-<p><code>(compound-accessor </code><em>pred</em> <em>accessor</em> <em>default</em><code>)</code></p>
-<p>Returns a procedure taking a single argument <em>obj</em>
-that behaves as follows:</p>
-<p>If <em>obj</em> is a compound object, <em>accessor</em> is applied to
-the first subobject of <em>obj</em> that satisfies <em>pred</em> and the result is returned;
-if there is no such subobject, <em>default</em> is returned.</p>
-<p>If <em>obj</em> is not a compound object, then if the object satisfies <em>pred</em>,
-it applies <em>accessor</em> to <em>obj</em> and returns what it returns.
-If <em>obj</em> does not satisfy <em>pred</em>, <em>default</em> is returned.
+<p><code>(compound-access </code><em>predicate accessor default obj</em><code>)</code></p>
+<p>If <em>obj</em> satisfies <em>obj</em>, <em>accessor</em> is applied to
+<em>obj</em> and the result is returned.
+Otherwise, if <em>obj</em> is a compound object, <em>accessor is applied to
+the first subobject that satisfies </em>obj</em>, and the result is returned.
+Otherwise, <em>default</em> is returned.
 <p>[R6RS analogue: <code>condition-accessor</code>]</p>
-<pre><blockquote>(define uni-member-hired (compound-accessor teacher? hired #f)
-(uni-member-hired alyssa) =&gt; #f
-(uni-member-hired guy) =&gt; 1981
-(uni-member-hired george) =&gt; 1983
-(uni-member-hired (make-compound #f '() 27 42 98 'fire!)) =&gt; #f
+<pre><blockquote>
+(define (uni-member-hire-date obj)
+  (compound-access teacher? hired-date #f obj))
+(uni-member-hire-date alyssa) =&gt; #f
+(uni-member-hire-date guy) =&gt; 1981
+(uni-member-hire-date george) =&gt; 1983
+(uni-member-hired (make-compound 27 42 98 'fire!)) =&gt; #f
 </blockquote></pre>
 
 <h2 id="implementation">Implementation</h2>
