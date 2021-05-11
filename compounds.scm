@@ -5,8 +5,6 @@
   (export
     make-compound
     compound?
-    compound-type
-    compound-properties
     compound-subobjects
     compound-length
     compound-ref
@@ -14,6 +12,6 @@
     compound-map->list
     compound-filter
     compound-predicate
-    compound-accessor)
+    compound-access)
   
   (include "compounds-impl.scm"))

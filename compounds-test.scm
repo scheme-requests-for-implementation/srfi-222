@@ -4,12 +4,6 @@
   (compounds))
 
 (define (test-compound-equal c1 c2)
-  (test-equal 
-    (compound-type c1)
-    (compound-type c2))
-  (test-equal
-    (compound-properties c1)
-    (compound-properties c2))
   (test-equal
     (compound-subobjects c1)
     (compound-subobjects c2)))
@@ -24,14 +18,6 @@
             (test (make-compound #f '() (make-compound #f '() 1) (make-compound #f '() 2) 3))
             
             (test-assert (not (compound? (list 1 2 3)))))
-
-(test-group "compound-type"
-            (test-equal 'type (compound-type (make-compound 'type '())))
-            (test-assert (not (compound-type (make-compound #f '()))))
-            (test-assert (not (compound-type 1))))
-
-(test-group "compound-properties"
-            (test-equal '((a . b)) (compound-properties (make-compound 'type '((a . b)) 1))))
 
 (test-group "compound-length"
             (test-equal 3 (compound-length (make-compound #f '() 1 2 3)))

@@ -53,15 +53,8 @@ object with the simple object as its sole component.</p>
 
 
 <h2 id="specification">Specification</h2>
-<h3>Procedures</h3>
-<p><code>(make-compound </code> <em>obj</em> ...<code>)</code></p>
-<p>Create a compound object
-containing the objects in <em>obj...</em> in the specified order.
-If any object in <em>obj...</em> is itself a compound object,
-it is flattened into its subobjects,
-which are then added to the compound object in sequence.
-<p>[R6RS analogue: <code>condition</code>]</p>
-<pre><blockquote>;; The following definitions are referenced in later examples
+<pre><blockquote>
+;; The following definitions are referenced in later examples
 
 (define-record-type &lt;student&gt;
   (student admission-year gpa)
@@ -78,35 +71,109 @@ which are then added to the compound object in sequence.
 (define alyssa (student 1986 4.0))
 
 (define guy (teacher 1981 25000))
+</pre></blockquote>
+
+<h3>Procedures</h3>
+<p><code>(make-compound </code> <em>obj</em> ...<code>)</code></p>
+<p>Create a compound object
+containing the objects in <em>obj...</em> in the specified order.
+If any object in <em>obj...</em> is itself a compound object,
+it is flattened into its subobjects,
+which are then added to the compound object in sequence.
+[R6RS analogue: <code>condition</code>]
+<pre><blockquote>
+;; This definition is referenced in later examples
 
 (define george
-  (make-compound 'teaching-assistant
+  (make-compound 
+    'teaching-assistant
     (student 1979 3.8)
     (teacher 1983 1000)))
     
-(define (uni-member? obj)
-  (or
-    (compound-predicate teacher? obj)
-    (compound-predicate student? obj)))
+<t drowned before the Days began,
+until he heard on strands of pearl
+where ends the world the music long,
+where ever-foaming billows roll
+the yellow gold and jewels wan.
+He saw the Mountain silent rise
+where twilight lies upon the knees
+of Valinor, and Eldamar
+beheld afar beyond the seas.
+A wanderer escaped from night
+to haven white he came at last,
+to Elvenhome the green and fair
+where keen the air, where pale as glass
+beneath the Hill of Ilmarin
+a-glimmer in a valley sheer
+the lamplit towers of Tirion
+are mirrored on the Shadowmere.
 
-(define (uni-member-date obj)
-  (cond
-    ((compound-predicate student? obj)
-     (compound-access student? year obj))
-    ((compound-predicate teacher? obj)
-     (compound-access student year obj))
-    (else #f)))
-</blockquote></pre>
+He tarried there from errantry,
+and melodies they taught to him,
+and sages old him marvels told,
+and harps of gold they brought to him.
+They clothed him then in elven-white,
+and seven lights before him sent,
+as through the Calacirian
+to hidden land forlorn he went.
+He came unto the timeless halls
+where shining fall the countless years,
+and endless reigns the Elder King
+in Ilmarin on Mountain sheer;
+and words unheard were spoken then
+of folk of Men and Elven-kin.
+Beyond the world were visions showed
+forbid to those that dwell therein.
+
+A ship then new they built for him
+of mithril and of elvenglass
+with crystal keel; no shaven oar
+nor sail she bore, on silver mast
+the Silmaril as lantern light
+and banner bright with living flame
+of fire unstained by Elbereth
+herself was set, who thither came
+and wings immortal made for him,
+and laid on him undying doom,
+to sail the shoreless skies and come
+behind the Sun and light of Moon.
+
+From Evereven's lofty hills
+where softly silver fountains fall
+his wings him bore, a wandering light,
+beyond the mighty Mountain Wall.
+From World's End then he turned away,
+and yearned again to find afar
+his home through shadows journeying,
+and burning as an island star
+on high above the mists he came,
+a distant flame before the Sun,
+a wonder ere the waking dawn
+where grey the Norland waters run.
+
+And over Middle-earth he passed
+and heard at last the weeping sore
+of women and of elven-maids
+in Elder Days, in years of yore.
+But on him mighty doom was laid,
+till Moon should fade, an orbed star
+to pass, and tarry never more
+on Hither Shores where mortals are;
+till end of Days on errand high,
+a herald bright that never rests,
+to bear his burning lamp afar,
+the Flammifer of Westernesse.
+/blockquote></pre>
 <p><code>(compound? </code><em>obj</em><code>)</code></p>
 <p>Returns <code>#t</code> if <em>obj</em> is a compound object, and <code>#f</code> otherwise.
-<p>[R6RS analogue: <code>condition?</code>]</p>
+[R6RS analogue: <code>condition?</code>]
 <pre><blockquote>(compound? alyssa) =&gt; #f
 (compound? george) =&gt; #t
 </blockquote></pre>
 <p><code>(compound-subobjects </code><em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns a list of its subobjects;
 otherwise, returns a list containing only <em>obj</em>.
-<p>[R6RS analogue: <code>simple-conditions</code>]</p>
+[R6RS analogue: <code>simple-conditions</code>]
 <pre><blockquote>(compound-subobjects alyssa) =&gt; (#&lt;student&gt;)
 (compound-subobjects george) =&gt; (#&lt;student&gt; #&lt;teacher&gt;)
 </blockquote></pre>
@@ -154,12 +221,12 @@ If <em>obj</em> does not satisfy <em>pred</em>, the result has no subobjects.</p
 (compound-filter teacher? george) =&gt;
   #&lt;compound: #&lt;teacher&gt;&gt;
 </blockquote></pre>
-<p><code>(compound-predicate pred obj </code><em>pred</em><code>)</code></p>
+<p><code>(compound-predicate </code><em>pred obj</em><code>)</code></p>
 <p>If <em>obj</em> satisfies <em>pred</em>,
 or is a compound object and
 at least one of its subobjects satisfies <em>pred</em>,
 then returns <code>#t</code>; otherwise returns <code>#f</code>.
-<p>[R6RS analogue: <code>condition-predicate</code>]</p>
+[R6RS analogue: <code>condition-predicate</code>]
 <pre><blockquote>
 (compound-predicate student? alyssa) =&gt; #f
 (compound-predicate teacher? george) =&gt; #t
@@ -170,7 +237,7 @@ then returns <code>#t</code>; otherwise returns <code>#f</code>.
 Otherwise, if <em>obj</em> is a compound object, <em>accessor is applied to
 the first subobject that satisfies </em>obj</em>, and the result is returned.
 Otherwise, <em>default</em> is returned.
-<p>[R6RS analogue: <code>condition-accessor</code>]</p>
+[R6RS analogue: <code>condition-accessor</code>]
 <pre><blockquote>
 (define (uni-member-hire-date obj)
   (compound-access teacher? hired-date #f obj))
