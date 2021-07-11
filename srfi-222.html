@@ -173,13 +173,13 @@ the first subobject that satisfies <em>obj</em>, and the result is returned.
 Otherwise, <em>default</em> is returned.
 [R6RS analogue: <code>condition-accessor</code>]
 <blockquote><pre>
-(define (uni-member-hire-date obj)
-  (compound-access teacher? hired-date #f obj))
+(define (uni-member-hire-year obj)
+  (compound-access teacher? hire-year #f obj))
 
-(uni-member-hire-date alyssa) =&gt; #f
-(uni-member-hire-date guy) =&gt; 1981
-(uni-member-hire-date george) =&gt; 1983
-(uni-member-hire-date (make-compound 27 42 98 'fire!)) =&gt; #f
+(uni-member-hire-year alyssa) =&gt; #f
+(uni-member-hire-year guy) =&gt; 1981
+(uni-member-hire-year george) =&gt; 1983
+(uni-member-hire-year (make-compound '(27 42 98) 'fire!)) =&gt; #f
 </pre></blockquote>
 
 <h2 id="implementation">Implementation</h2>

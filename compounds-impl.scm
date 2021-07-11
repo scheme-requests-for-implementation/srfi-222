@@ -1,5 +1,5 @@
 (define-record-type <compound-object>
-  (raw-compound-object type props subobjs)
+  (raw-compound-object subobjs)
   compound?
   (subobjs raw-object-subobjects))
 
@@ -16,8 +16,8 @@
                 (append (reverse (compound-subobjects (car in))) out)
                 (cons (car in) out))))))
 
-(define (make-compound type subobjs)
-  (raw-compound-object type props (assemble-subobjects subobjs)))
+(define (make-compound subobjs)
+  (raw-compound-object (assemble-subobjects subobjs)))
 
 (define (compound-subobjects obj)
   (if (compound? obj)
@@ -77,7 +77,7 @@
     ((pred obj)
      (accessor obj))
     ((compound? obj)
-     (let loop ((subobjs (subobjects obj)))
+     (let loop ((subobjs (compound-subobjects obj)))
        (cond
          ((null? subobjs) default)
          ((pred (car subobjs)) (accessor (car subobjs)))
