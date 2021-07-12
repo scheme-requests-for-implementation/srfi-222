@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
     <title>SRFI 222: Compound Objects</title>
-    <!--link href="/favicon.png" rel="icon" type="image/png"-->
+    <link href="/favicon.png" rel="icon" sizes="192x192" type="image/png">
     <link rel="stylesheet" href="https://srfi.schemers.org/srfi.css" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1"></head>
   <body>
@@ -60,13 +61,13 @@ object with the simple object as its sole component.</p>
   student?
   (admission-year admission-year)
   (gpa gpa))       ; grade-point average
-  
+
 (define-record-type &lt;teacher&gt;
   (teacher hire-year salary)
   teacher?
   (hire-year hired)     ; integer year
   (salary salary))  ; annualized
-  
+
 (define alyssa (student 1986 4.0))
 
 (define guy (teacher 1981 25000))
@@ -84,11 +85,11 @@ which are then added to the compound object in sequence.
 ;; These definitions are referenced in later examples
 
 (define george
-  (make-compound 
+  (make-compound
     'teaching-assistant
     (student 1979 3.8)
     (teacher 1983 1000)))
-    
+
 (define (teaching-assistant? obj)
   (eq? obj 'teaching-assistant))
 
