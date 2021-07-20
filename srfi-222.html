@@ -106,13 +106,13 @@ which are then added to the compound object in sequence.
 otherwise, returns a list containing only <em>obj</em>.
 [R6RS analogue: <code>simple-conditions</code>]
 <blockquote><pre>(compound-subobjects alyssa) =&gt; (#&lt;student&gt;)
-(compound-subobjects george) =&gt; (#&lt;student&gt; #&lt;teacher&gt;)
+(compound-subobjects george) =&gt; (teaching-assistant #&lt;student&gt; #&lt;teacher&gt;)
 </pre></blockquote>
 <p><code>(compound-length </code><em>obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns the number of its subobjects as an exact
 integer.  Otherwise, it returns 1.</p>
 <blockquote><pre>(compound-length alyssa) =&gt; 1
-(compound-length george) =&gt; 2
+(compound-length george) =&gt; 3
 </pre></blockquote>
 <p><code>(compound-ref </code><em>obj k</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns the <em>k</em>th subobject.
@@ -120,7 +120,7 @@ Otherwise, <em>obj</em> is returned.
 In either case, it is an error if <em>k</em> is less than
 zero, or greater than or equal to <code>(compound-length </code><em>obj</em><code>)</code>.</p>
 <blockquote><pre>(compound-ref alyssa 0) =&gt; #&lt;student&gt;
-(compound-ref george 1) =&gt; #&lt;teacher&gt;
+(compound-ref george 2) =&gt; #&lt;teacher&gt;
 </pre></blockquote>
 <p><code>(compound-map </code><em>mapper obj</em><code>)</code></p>
 <p>If <em>obj</em> is a compound object, returns a compound object
