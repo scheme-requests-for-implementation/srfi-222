@@ -16,7 +16,7 @@
                 (append (reverse (compound-subobjects (car in))) out)
                 (cons (car in) out))))))
 
-(define (make-compound subobjs)
+(define (make-compound . subobjs)
   (raw-compound-object (assemble-subobjects subobjs)))
 
 (define (compound-subobjects obj)
@@ -81,4 +81,5 @@
        (cond
          ((null? subobjs) default)
          ((pred (car subobjs)) (accessor (car subobjs)))
-         (else (loop (cdr subobjs))))))))   
+         (else (loop (cdr subobjs))))))
+    (else default)))

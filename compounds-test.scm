@@ -13,37 +13,37 @@
 (test-group "make-compound, compound?, compound-subobjects"
             (define (test c)
               (test-assert (compound? c))
-              (test-equal (compound-subobjects c) (list '(1 2 3))))
-            (test (make-compound '(1 2 3)))
-            (test (make-compound (make-compound '(1)) (make-compound 2) 3))
+              (test-equal (compound-subobjects c) '(1 2 3)))
+            (test (make-compound 1 2 3))
+            (test (make-compound (make-compound 1) (make-compound 2) 3))
             
             (test-assert (not (compound? (list '(1 2 3))))))
 
 (test-group "compound-length"
-            (test-equal 3 (compound-length (make-compound '(1 2 3))))
+            (test-equal 3 (compound-length (make-compound 1 2 3)))
             (test-equal 1 (compound-length 'test)))
 
 (test-group "compound-ref"
-            (test-equal 1 (compound-ref (make-compound '(1 2 3)) 0))
+            (test-equal 1 (compound-ref (make-compound 1 2 3) 0))
             (test-equal 1 (compound-ref 1 0)))
 
 (test-group "compound-map"
-            (define c (make-compound '(1 2 3)))
+            (define c (make-compound 1 2 3))
             
             (test-compound-equal
-              (make-compound 'type '((a . b)) 2 3 4)
-              (compound-map 'type '((a . b)) (lambda (e) (+ 1 e)) c))
+              (make-compound 2 3 4)
+              (compound-map (lambda (e) (+ 1 e)) c))
             
             (test-compound-equal
-              (make-compound 'type '((a . b)) 0 2 0 3 0 4)
-              (compound-map 'type '((a . b)) (lambda (e) (make-compound 0 (+ 1 e))) c))
+              (make-compound 0 2 0 3 0 4)
+              (compound-map (lambda (e) (make-compound 0 (+ 1 e))) c))
             
             (test-compound-equal
               (make-compound 2)
-              (compound-map 'type '((a . b)) (lambda (e) (+ 1 e)) 1)))
+              (compound-map (lambda (e) (+ 1 e)) 1)))
 
 (test-group "compound-map->list"
-            (define c (make-compound '(1 2 3)))
+            (define c (make-compound 1 2 3))
             (test-equal 
               (compound-map->list
                   (lambda (e) (+ 1 e)) 
@@ -56,116 +56,135 @@
               (list 2)))
 
 (test-group "compound-filter"
-            (define c (make-compound '(1 2 3)))
+            (define c (make-compound 1 2 3))
             (test-compound-equal
-              (compound-filter 'type '((a . b)) (lambda (e) (= e 2)) c)
-              (make-compound 'type '((a . b)) 2))
-            (test-compound-equal
-              (compound-filter 'type '((a . b)) (lambda (e) (= e 2)) 2)
+              (compound-filter (lambda (e) (= e 2)) c)
               (make-compound 2))
             (test-compound-equal
-              (compound-filter 'type '((a . b)) (lambda (e) (= e 2)) 1)
+              (compound-filter (lambda (e) (= e 2)) 2)
+              (make-compound 2))
+            (test-compound-equal
+              (compound-filter (lambda (e) (= e 2)) 1)
               (make-compound)))
 
 (test-group "compound-predicate"
-            (define c1 (make-compound 'type '((a . b)) 1 2))
-            (define c2 (make-compound 'type2 '((a . b)) 3 4))
+            (define c1 (make-compound 1 2))
+            (define c2 (make-compound 3 4))
             (define (pred1 obj)
               (equal? obj 'a))
-            (define (pred2 obj)
-              (equal? obj 'type))
             (define (pred3 obj)
               (equal? obj 1))
             
-            (test-assert ((compound-predicate pred1) 'a))
-            (test-assert (not ((compound-predicate pred1) c1)))
-            (test-assert (not ((compound-predicate pred1) c2)))
-            
-            (test-assert (not ((compound-predicate pred2) 'a)))
-            (test-assert ((compound-predicate pred2) c1))
-            (test-assert (not ((compound-predicate pred2) c2)))
-            
-            (test-assert (not ((compound-predicate pred3) 'a)))
-            (test-assert ((compound-predicate pred3) c1))
-            (test-assert (not ((compound-predicate pred3) c2))))
+            (test-assert (compound-predicate pred1 'a))
+            (test-assert (not (compound-predicate pred1 c1)))
+            (test-assert (not (compound-predicate pred1 c2)))
 
-(test-group "compound-accessor"
+            (test-assert (not (compound-predicate pred3 'a)))
+            (test-assert (compound-predicate pred3 c1))
+            (test-assert (not (compound-predicate pred3 c2))))
+
+(test-group "compound-access"
             (define (pred obj)
-              (= obj 2))
+              (and (number? obj)
+                   (= obj 2)))
             (define (accessor obj)
               (+ 1 obj))
             (test-equal
-              ((compound-accessor pred accessor 0) (make-compound '(1 2 3)))
+              (compound-access pred accessor 0 (make-compound 1 2 3))
               3)
             (test-equal
-              ((compound-accessor pred accessor 0) (make-compound '(1 3)))
+              (compound-access pred accessor 0 (make-compound 1 3))
               0)
             (test-equal
-              ((compound-accessor pred accessor 0) 1)
+              (compound-access pred accessor 0 1)
               0)
             (test-equal
-              ((compound-accessor pred accessor 0) 2)
+              (compound-access pred accessor 0 2)
               3))
 
 (test-group "examples in spec"
 
-;; The following definitions are referenced in later examples
+            ;; The following definitions are referenced in later examples
 
-(define-record-type <student>
-  (student admission-year gpa)
-  student?
-  (admission-year admission-year)
-  (gpa gpa))       ; grade-point average
-  
-(define-record-type <teacher>
-  (teacher hire-year salary)
-  teacher?
-  (hire-year hired)     ; integer year
-  (salary salary))  ; annualized
-  
-(define alyssa (student 1986 4.0))
+            (define-record-type <student>
+              (student admission-year gpa)
+              student?
+              (admission-year admission-year)
+              (gpa gpa))       ; grade-point average
 
-(define guy (teacher 1981 25000))
+            (define-record-type <teacher>
+              (teacher hire-year salary)
+              teacher?
+              (hire-year hire-year)     ; integer year
+              (salary salary))  ; annualized
 
-;; These definitions are referenced in later examples
+            (define alyssa (student 1986 4.0))
 
-(define george
-  (make-compound 
-    'teaching-assistant
-    (student 1979 3.8)
-    (teacher 1983 1000)))
-    
-(define (teaching-assistant? obj)
-  (eq? obj 'teaching-assistant))
+            (define guy (teacher 1981 25000))
 
-(compound? alyssa) => #f
-(compound-subobjects alyssa) => (#<student>)
-(compound-subobjects george) => (#<student> #<teacher>)
+            ;; These definitions are referenced in later examples
 
-(compound-length alyssa) => 1
+            (define george
+              (make-compound
+               'teaching-assistant
+               (student 1979 3.8)
+               (teacher 1983 1000)))
 
-(compound-ref alyssa 0) => #<student>
-(compound-ref george 1) => #<teacher>
+            (define (teaching-assistant? obj)
+              (eq? obj 'teaching-assistant))
 
-(compound-map - (compound 1 2 3 4 5)) => #<compound: -1 -2 -3 -4 -5>
-(compound-map->list - (compound 1 2 3 4 5)) => (-1 -2 -3 -4 -5)
-(compound-filter teacher? alyssa) => #<compound>
-(compound-filter teacher? george) =>
-  #<compound: #<teacher>>
+            (test-assert (not (compound? alyssa)))
+            (let ((subobjs (compound-subobjects alyssa)))
+              (test-assert (list? subobjs))
+              (test-equal 1 (length subobjs))
+              (test-assert (student? (car subobjs)))
+              (test-equal 1986 (admission-year (car subobjs)))
+              (test-equal 4.0 (gpa (car subobjs))))
+            (let ((subobjs (compound-subobjects george)))
+              (test-assert (list? subobjs))
+              (test-equal 3 (length subobjs))
+              (test-equal 'teaching-assistant (car subobjs))
+              (test-assert (student? (cadr subobjs)))
+              (test-equal 1979 (admission-year (cadr subobjs)))
+              (test-equal 3.8 (gpa (cadr subobjs)))
+              (test-assert (teacher? (list-ref subobjs 2)))
+              (test-equal 1983 (hire-year (list-ref subobjs 2)))
+              (test-equal 1000 (salary (list-ref subobjs 2))))
 
-(compound-predicate student? alyssa) => #t
-(compound-predicate student? george) => #t
-(compound-predicate teacher? george) => #t
-(compound-predicate teacher? guy) => #t
-(compound-predicate teaching-assistant? alyssa) => #f
-(compound-predicate teaching-assistant? guy) => #f
-(compound-predicate teaching-assistant? george) => #t
+            (test-equal 1 (compound-length alyssa))
 
-(define (uni-member-hire-date obj)
-  (compound-access teacher? hired-date #f obj))
+            (test-assert (student? (compound-ref alyssa 0)))
+            (test-assert (teacher? (compound-ref george 2)))
 
-(uni-member-hire-date alyssa) => #f
-(uni-member-hire-date guy) => 1981
-(uni-member-hire-date george) => 1983
-(uni-member-hire-date (make-compound '(27 42 98) 'fire!)) => #f
+            (test-equal
+                '(-1 -2 -3 -4 -5)
+              (compound-subobjects (compound-map - (make-compound 1 2 3 4 5))))
+            (test-equal
+                '(-1 -2 -3 -4 -5)
+              (compound-map->list - (make-compound 1 2 3 4 5)))
+
+            (test-equal
+                '()
+              (compound-subobjects (compound-filter teacher? alyssa)))
+            (let ((subobjs (compound-subobjects (compound-filter teacher? george))))
+              (test-equal 1 (length subobjs))
+              (test-assert (teacher? (car subobjs))))
+
+            (test-assert (compound-predicate student? alyssa))
+            (test-assert (compound-predicate student? george))
+            (test-assert (compound-predicate teacher? george))
+            (test-assert (compound-predicate teacher? guy))
+            (test-assert (not (compound-predicate teaching-assistant? alyssa)))
+            (test-assert (not (compound-predicate teaching-assistant? guy)))
+            (test-assert (compound-predicate teaching-assistant? george))
+
+            (let ()
+              (define (uni-member-hire-year obj)
+                (compound-access teacher? hire-year #f obj))
+
+              (test-equal #f (uni-member-hire-year alyssa))
+              (test-equal 1981 (uni-member-hire-year guy))
+              (test-equal 1983 (uni-member-hire-year george))
+              (test-equal #f (uni-member-hire-year (make-compound '(27 42 98) 'fire!)))))
+
 (test-end "Compounds")
