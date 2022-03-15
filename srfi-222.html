@@ -161,7 +161,7 @@ then returns <code>#t</code>; otherwise returns <code>#f</code>.
 (compound-predicate teaching-assistant? george) =&gt; #t
 </pre></blockquote>
 <p><code>(compound-access </code><em>predicate accessor default obj</em><code>)</code></p>
-<p>If <em>obj</em> satisfies <em>obj</em>, <em>accessor</em> is applied to
+<p>If <em>obj</em> satisfies <em>predicate</em>, <em>accessor</em> is applied to
 <em>obj</em> and the result is returned.
 Otherwise, if <em>obj</em> is a compound object, <em>accessor</em> is applied to
 the first subobject that satisfies <em>obj</em>, and the result is returned.
