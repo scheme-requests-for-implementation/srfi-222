@@ -1,4 +1,4 @@
-(define-library (compounds)
+(define-library (srfi 222)
 
   (import (scheme base))
 
@@ -14,4 +14,4 @@
    compound-predicate
    compound-access)
 
-  (include "compounds-impl.scm"))
+  (include "222-impl.scm"))

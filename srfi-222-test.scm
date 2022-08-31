@@ -1,7 +1,26 @@
 (import
  (scheme base)
- (srfi 64)
- (compounds))
+ (srfi 222))
+
+(cond-expand
+  (chibi
+   (import (rename (except (chibi test) test-equal)
+                   (test test-equal)
+                   (test-group test-group*)))
+   (define test-skip-count 0)
+   (define (test-skip n)
+     (set! test-skip-count n))
+   (define-syntax test-group
+     (syntax-rules ()
+       ((_ name body ...)
+        (test-group*
+          name
+          (if (> test-skip-count 0)
+              (set! test-skip-count (- test-skip-count 1))
+              (let ()
+               body ...)))))))
+  (else
+   (import (srfi 64))))
 
 (define (test-compound-equal c1 c2)
   (test-equal
@@ -90,17 +109,17 @@
             (define (accessor obj)
               (+ 1 obj))
             (test-equal
-             (compound-access pred accessor 0 (make-compound 1 2 3))
-             3)
+              3
+              (compound-access pred accessor 0 (make-compound 1 2 3)))
             (test-equal
-             (compound-access pred accessor 0 (make-compound 1 3))
-             0)
+              0
+              (compound-access pred accessor 0 (make-compound 1 3)))
             (test-equal
-             (compound-access pred accessor 0 1)
-             0)
+              0
+              (compound-access pred accessor 0 1))
             (test-equal
-             (compound-access pred accessor 0 2)
-             3))
+              3
+              (compound-access pred accessor 0 2)))
 
 (test-group "examples in spec"
 
