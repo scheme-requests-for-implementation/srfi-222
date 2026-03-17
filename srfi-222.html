@@ -19,7 +19,9 @@
   <li>Draft #1 published: 2021-03-05</li>
   <li>Draft #2 published: 2021-07-11</li>
   <li>Finalized: 2021-07-20</li>
-</ul>
+  <li>Revised to fix errata:
+    <ul>
+      <li>2026-03-17 (<a href="#erratum-1">Fixed typo</a> in <code>compound-access</code>.)</li></ul></li></ul>
 
 <h2 id="abstract">Abstract</h2>
 
@@ -161,7 +163,7 @@ then returns <code>#t</code>; otherwise returns <code>#f</code>.
 (compound-predicate teaching-assistant? george) =&gt; #t
 </pre></blockquote>
 <p><code>(compound-access </code><em>predicate accessor default obj</em><code>)</code></p>
-<p>If <em>obj</em> satisfies <em>predicate</em>, <em>accessor</em> is applied to
+<p class="erratum" id="erratum-1">If <em>obj</em> satisfies <em>predicate</em>, <em>accessor</em> is applied to
 <em>obj</em> and the result is returned.
 Otherwise, if <em>obj</em> is a compound object, <em>accessor</em> is applied to
 the first subobject that satisfies <em>predicate</em>, and the result is returned.
