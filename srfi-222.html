@@ -164,7 +164,7 @@ then returns <code>#t</code>; otherwise returns <code>#f</code>.
 <p>If <em>obj</em> satisfies <em>predicate</em>, <em>accessor</em> is applied to
 <em>obj</em> and the result is returned.
 Otherwise, if <em>obj</em> is a compound object, <em>accessor</em> is applied to
-the first subobject that satisfies <em>obj</em>, and the result is returned.
+the first subobject that satisfies <em>predicate</em>, and the result is returned.
 Otherwise, <em>default</em> is returned.
 [R6RS analogue: <code>condition-accessor</code>]
 <blockquote><pre>
